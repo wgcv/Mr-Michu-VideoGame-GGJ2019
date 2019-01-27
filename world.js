@@ -370,7 +370,7 @@ function update() {
 
         player.anims.play('left', true);
     }
-     if (cursors.right.isDown || right) {
+    else if (cursors.right.isDown || right) {
         player.setVelocityX(velolcity);
 
         player.anims.play('right', true);
