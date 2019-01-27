@@ -31,6 +31,11 @@ var map;
 var velolcity = 290;
 var junp = -375;
 var game = new Phaser.Game(config);
+var left=false;
+var right=false;
+var jump=false;
+var duck= false;
+
 function collectCoin(sprite, tile) {
     coinLayer.removeTileAt(tile.x, tile.y); 
     score += 10;
@@ -118,10 +123,14 @@ function preload() {
     this.load.spritesheet('house', 'assets/house.png', {frameWidth: 450, frameHeight: 450});
 
     this.load.audio('theme', 'assets/ij.mp3');
+    this.load.spritesheet('buttonjump', 'assets/button-round-b.png',{frameWidth: 200, frameHeight: 200});
+    this.load.spritesheet('buttonhorizontal', 'assets/button-horizontal.png',{frameWidth: 225, frameHeight: 150});
+    this.load.spritesheet('buttonvertical', 'assets/button-vertical.png',{frameWidth: 150, frameHeight: 150});
 
 }
 
 function create() {
+  
     music = this.sound.add('theme');
     music.play()
     // Score
@@ -189,7 +198,7 @@ function create() {
      // set bounds so the camera won't go outside the game world
      this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
      // make the camera follow the player
-     this.cameras.main.startFollow(player, false, 1, 1, -500);
+     this.cameras.main.startFollow(player, false, 1, 1, -300);
      
      // set background color, so the sky is not black    
      this.cameras.main.setBackgroundColor('#ccccff');
@@ -280,6 +289,54 @@ house.body.setSize(360, 450, 180, 225);
 this.anims.create(houseAnimation);
 this.physics.add.overlap(player, houses, houseWin, null, this);
 
+if( navigator.userAgent.match(/Android/i)
+|| navigator.userAgent.match(/webOS/i)
+|| navigator.userAgent.match(/iPhone/i)
+|| navigator.userAgent.match(/iPad/i)
+|| navigator.userAgent.match(/iPod/i)
+|| navigator.userAgent.match(/BlackBerry/i)
+|| navigator.userAgent.match(/Windows Phone/i)) {
+
+
+   this.rigthbtn = this.add.sprite(460, 472, 'buttonhorizontal').setInteractive();
+   this.rigthbtn.on('pointerover', function(){right=true;});
+   this.rigthbtn.on('pointerout',  function(){right=false;});
+   this.rigthbtn.on('pointerdown', function(){right=true;});
+   this.rigthbtn.on('pointerup',  function(){right=false;});
+   this.rigthbtn.setScrollFactor(0);
+
+   this.leftbtn = this.add.sprite(200, 472, 'buttonhorizontal').setInteractive();
+   this.leftbtn.on('pointerover', function(){left=true; });
+   this.leftbtn.on('pointerout',  function(){left=false;});
+   this.leftbtn.on('pointerdown', function(){left=true;});
+   this.leftbtn.on('pointerup',  function(){left=false;});
+   this.leftbtn.setScrollFactor(0);
+
+   this.downbtn = this.add.sprite(336, 625, 'buttonvertical').setInteractive();
+   this.downbtn.on('pointerover', function(){duck=true;});
+   this.downbtn.on('pointerout',  function(){duck=false;});
+   this.downbtn.on('pointerdown', function(){duck=true;});
+   this.downbtn.on('pointerup',  function(){duck=false;});
+   this.downbtn.setScrollFactor(0);
+
+   this.jumpbtn = this.add.sprite(1700, 500, 'buttonjump').setInteractive();
+   this.jumpbtn.on('pointerover', function(){jump=false; 
+   if(player.body.onFloor()){
+        player.setVelocityY(junp);
+   } 
+});
+   this.jumpbtn.on('pointerout',  function(){jump=false;});
+   this.jumpbtn.on('pointerdown',function(){jump=false; 
+    if(player.body.onFloor()){
+
+        player.setVelocityY(junp);
+   }
+    
+});
+   this.jumpbtn.on('pointerup',  function(){jump=false;});
+   this.jumpbtn.setScrollFactor(0);
+   }
+   this.cameras.main.startFollow(player, false, 1, 1, -100);
 
 }
 
@@ -308,12 +365,12 @@ function update() {
     {
         return;
     }
-    if (cursors.left.isDown) {
+    if (cursors.left.isDown || left) {
         player.setVelocityX(velolcity * -1);
 
         player.anims.play('left', true);
     }
-    else if (cursors.right.isDown) {
+     if (cursors.right.isDown || right) {
         player.setVelocityX(velolcity);
 
         player.anims.play('right', true);
@@ -323,10 +380,10 @@ function update() {
 
         player.anims.play('turn');
     }
-    if ((cursors.space.isDown || cursors.up.isDown  )&& player.body.onFloor()) {
+    if ((cursors.space.isDown || cursors.up.isDown  )&& player.body.onFloor() || (jump && player.body.onFloor())) {
         player.setVelocityY(junp);
     }
-    else if(cursors.down.isDown && !player.body.onFloor()){
+    else if((cursors.down.isDown && !player.body.onFloor()) || (duck && !player.body.onFloor()) ){
         player.setVelocityY(400);
 
     }
@@ -335,7 +392,7 @@ function update() {
 }
 
 
-$('html,body').on('click', function() {
+document.body.addEventListener('click', function() {
 
     if (!inGame) {
         if (game != undefined) {
