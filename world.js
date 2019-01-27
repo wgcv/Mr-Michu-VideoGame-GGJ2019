@@ -297,29 +297,34 @@ if( navigator.userAgent.match(/Android/i)
 || navigator.userAgent.match(/BlackBerry/i)
 || navigator.userAgent.match(/Windows Phone/i)) {
 
+    var height = window.innerHeight
+    || document.documentElement.clientHeight
+    || document.body.clientHeight;
 
-   this.rigthbtn = this.add.sprite(460, 472, 'buttonhorizontal').setInteractive();
+   this.rigthbtn = this.add.sprite(460, height/2, 'buttonhorizontal').setInteractive();
    this.rigthbtn.on('pointerover', function(){right=true;});
    this.rigthbtn.on('pointerout',  function(){right=false;});
    this.rigthbtn.on('pointerdown', function(){right=true;});
    this.rigthbtn.on('pointerup',  function(){right=false;});
    this.rigthbtn.setScrollFactor(0);
 
-   this.leftbtn = this.add.sprite(200, 472, 'buttonhorizontal').setInteractive();
+   this.leftbtn = this.add.sprite(200, height/2, 'buttonhorizontal').setInteractive();
    this.leftbtn.on('pointerover', function(){left=true; });
    this.leftbtn.on('pointerout',  function(){left=false;});
    this.leftbtn.on('pointerdown', function(){left=true;});
    this.leftbtn.on('pointerup',  function(){left=false;});
    this.leftbtn.setScrollFactor(0);
 
-   this.downbtn = this.add.sprite(336, 625, 'buttonvertical').setInteractive();
+   this.downbtn = this.add.sprite(336, height/2 + 153, 'buttonvertical').setInteractive();
    this.downbtn.on('pointerover', function(){duck=true;});
    this.downbtn.on('pointerout',  function(){duck=false;});
    this.downbtn.on('pointerdown', function(){duck=true;});
    this.downbtn.on('pointerup',  function(){duck=false;});
    this.downbtn.setScrollFactor(0);
-
-   this.jumpbtn = this.add.sprite(1700, 500, 'buttonjump').setInteractive();
+   var width = window.innerWidth
+   || document.documentElement.clientWidth
+   || document.body.clientWidth;
+   this.jumpbtn = this.add.sprite(width-200, height/2, 'buttonjump').setInteractive();
    this.jumpbtn.on('pointerover', function(){jump=false; 
    if(player.body.onFloor()){
         player.setVelocityY(junp);
